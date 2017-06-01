@@ -1,0 +1,35 @@
+{
+  "name": "official-website-background",
+  "description": "官网管理后台",
+  "version": "1.0.0",
+  "author": "Drama <abandoneddrama@foxmail.com>",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+  },
+  "dependencies": {
+    "vue": "^2.3.3"
+  },
+  "devDependencies": {
+    "axios": "^0.16.1",
+    "babel-core": "^6.0.0",
+    "babel-loader": "^6.4.1",
+    "babel-plugin-component": "^0.9.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-latest": "^6.0.0",
+    "cross-env": "^3.2.4",
+    "css-loader": "^0.25.0",
+    "element-ui": "^1.2.9",
+    "file-loader": "^0.9.0",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
+    "qs": "^6.4.0",
+    "style-loader": "^0.18.1",
+    "vue-loader": "^11.3.4",
+    "vue-router": "^2.5.3",
+    "vue-template-compiler": "^2.2.1",
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5"
+  }
+}
