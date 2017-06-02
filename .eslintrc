@@ -4,6 +4,10 @@
   "rules": {
     "vue/jsx-uses-vars": 2,
     "handle-callback-err": 0,
-    "camelcase": 0
+    "camelcase": 0,
+    "indent": [
+        "error",
+        4
+    ],
   }
 }

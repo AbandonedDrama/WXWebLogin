@@ -18,25 +18,23 @@ module.exports = {
           }
           // other vue-loader options go here
         }
-      },
-      {
+      },{ 
+        test: /iview.src.*?js$/,
+        loader: 'babel-loader' 
+      },{
         test: /\.css$/,
         loader: 'style-loader!css-loader'
-      },
-      {
+      },{
         test: /\.less$/,
         loader: "style-loader!css-loader!less-loader",
-      },
-      {
+      },{
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/
-      },
-      {
+      },{
         test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
         loader: 'file-loader'
-      },
-      {
+      },{
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
         options: {

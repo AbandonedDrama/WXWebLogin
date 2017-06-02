@@ -1,112 +1,122 @@
 <template>
-  <div id="login">
-    <div class="htmleaf-container">
-      <div class="wrapper">
-        <div class="container">
-          <h1>哎哟不错官网管理后台</h1>
-          
-          <form class="form">
-            <input type="text" v-model="phone_number" placeholder="账号/手机号">
-            <input type="password" v-model="password" placeholder="密码" @keyup.enter="login">
-            <div id="login-button" @click="login">登录</div>
-          </form>
-        </div>
-        
-        <ul class="bg-bubbles">
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-        </ul>
-      </div>
+    <div id="login">
+        <h1>登录页</h1>
+        <br>
+        <!-- <Row type="flex" justify="center">
+            <Col :span="18" offset="4">
+                <Steps :current="current">
+                    <Step title="扫码登录" icon="qr-scanner"></Step>
+                    <Step title="点击确认" icon="ios-paperplane"></Step>
+                    <Step title="登陆成功" icon="android-done"></Step>
+                </Steps>
+            </Col>
+        </Row> -->
+        <br>
+        <Row type="flex" justify="center">
+            <Col :span="10">
+                <Card>
+                    <Row type="flex" justify="center" class="first">
+                        <img :src="QrcodeURL">
+                    </Row>
+                    <br>
+                    <Button type="success" @click="getQrcodeURL" long>重新获取</Button>
+                </Card>
+            </Col>
+        </Row>
+        <br>
     </div>
-  </div>
 </template>
 
-<script>
-import * as API from '../assets/axios/api.js'
-import '../assets/style/login.less'
-
-export default {
-  name: 'login',
-  data () {
-    return {
-      phone_number: '',
-      password: ''
-    }
-  },
-  methods: {
-
-    login () {
-      if (this.phone_number !== '') {
-        // statement
-        if (this.password !== '') {
-          // statement
-          const data = {
-            'phone_number': this.phone_number,
-            'password': this.password
-          }
-          this.$axios.post(API.loginUrl, data)
-          .then(msg => {
-            console.log(msg)
-            if (msg.data.flag >> 0 === 1000) {
-              this.consoleSuccess('可爱的官网管理员!这个只有你能看到哦!')
-              var userData = msg.data
-              this.USER_SIGNIN({ userData })
-              setTimeout(() => {
-                this.$router.push({ path: 'addNews' })
-              }, 1000)
-            } else {
-              this.consoleError(msg.data.return_code)
-            }
-          })
-          .catch(error => {
-            this.consoleWarning('服务发生意外情况,请稍后重试!')
-            console.log(error)
-          })
-        } else {
-          this.consoleError('请完善密码!')
+<style lang="less">
+    .first{
+        img{
+            width: 100%;
+            height: 100%;
         }
-      } else {
-        this.consoleError('请完善账号!')
-      }
-    },
-
-    consoleSuccess (success) {
-      this.$notify({
-        title: '成功',
-        message: success,
-        type: 'success'
-      })
-    },
-
-    consoleWarning (warning) {
-      this.$notify({
-        title: '警告',
-        message: warning,
-        type: 'warning'
-      })
-    },
-
-    consoleNews (news) {
-      this.$notify.info({
-        title: '消息',
-        message: news
-      })
-    },
-
-    consoleError (error) {
-      this.$notify.error({
-        title: '错误',
-        message: error
-      })
     }
-  }
+</style>
+<script>
+import { getQrcode, loginWebWechat } from '../assets/axios/api.js'
+export default {
+    name: 'login',
+    data () {
+        return {
+            current: 0, // 步骤
+            QrcodeURL: null, // 二维码地址
+            uuid: null, // 登录标识
+            wxuin: null // 登陆后唯一识别码 键
+        }
+    },
+    created: function () {
+        this.getQrcodeURL() // 初始化
+    },
+    methods: {
+        // 获取二维码
+        getQrcodeURL () {
+            const loading = this.$Message.loading({
+                content: '正在加载中...',
+                duration: 0
+            })
+            this.$axios.post(getQrcode)
+            .then(msg => {
+                setTimeout(loading, 1000)
+                if (!msg.data) {
+                    this.$Message.warning('获取二维码失败!请点击图片刷新!')
+                    return false
+                }
+                this.QrcodeURL = msg.data.qrcode
+                this.uuid = msg.data.uuid
+                this.loginWebWechat()
+            })
+            .catch(error => {
+                this.warning(false, '服务器Error')
+            })
+        },
+
+        // 获取登录状态
+        loginWebWechat () {
+            this.$axios.post(loginWebWechat, {
+                uuid: this.uuid
+            })
+            .then(msg => {
+                if (!msg.data) {
+                    return false
+                }
+                this.wxuin = msg.data
+                this.success(false, '登录成功!2S后跳转好友列表!')
+                setTimeout(() => {
+                    this.$router.push({ path: '/homeContent/WXMemberList', query: this.wxuin })
+                }, 2000)
+            })
+            .catch(error => {
+                this.warning(false, '二维码失效!请刷新后重试!')
+            })
+        },
+
+        info (title, nodesc) {
+            this.$Notice.info({
+                title: title ? '' : '消息',
+                desc: nodesc
+            })
+        },
+        success (title, nodesc) {
+            this.$Notice.success({
+                title: title ? '' : '成功',
+                desc: nodesc
+            })
+        },
+        warning (title, nodesc) {
+            this.$Notice.warning({
+                title: title ? '' : '警告',
+                desc: nodesc
+            })
+        },
+        error (title, nodesc) {
+            this.$Notice.error({
+                title: title ? '' : '错误',
+                desc: nodesc
+            })
+        }
+    }
 }
 </script>

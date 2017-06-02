@@ -4,6 +4,7 @@ import router from './assets/router/router.js'
 // import store from './assets/store/'
 import axios from './assets/axios/http.js'
 import Qs from 'qs'
+import './assets/iviewUi/'
 // import './assets/ElementUi'
 import './assets/public/sx_style.less'
 // import './assets/editor/editor.config.js'
@@ -24,8 +25,8 @@ Vue.prototype.$Qs = Qs
 // })
 
 new Vue({
-  el: '#app',
-  router,
-  axios,
-  render: h => h(App)
+    el: '#app',
+    router,
+    axios,
+    render: h => h(App)
 })

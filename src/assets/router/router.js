@@ -3,58 +3,42 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
+import iView from 'iview'
+Vue.use(iView)
+
 const routes = [
-  {
-    path: '/login', // 登录
-    component: resolve => require(['../../component/login.vue'],
-      resolve),
-    meta: { auth: false }
-  },
-  // {
-  //   path: '/official_website', // 官网后台
-  //   component: resolve => require(['../../component/official_website.vue'],
-  //         resolve),
-  //   children: [
-  //     {
-  //       path: '/addNews', // 添加新闻
-  //       component: resolve => require(['../../component/addNews.vue'],
-  //         resolve)
-  //     },
-  //     {
-  //       path: '/newsList', // 新闻列表
-  //       component: resolve => require(['../../component/newsList.vue'],
-  //         resolve)
-  //     },
-  //     {
-  //       path: '/addEmploy', // 添加招聘
-  //       component: resolve => require(['../../component/addEmploy.vue'],
-  //         resolve)
-  //     },
-  //     {
-  //       path: '/employList', // 招聘列表
-  //       component: resolve => require(['../../component/employList.vue'],
-  //         resolve)
-  //     },
-  //     {
-  //       path: '/addQrcode', // 添加App二维码
-  //       component: resolve => require(['../../component/addQrcode.vue'],
-  //         resolve)
-  //     },
-  //     {
-  //       path: '/qrcodeList', // App二维码列表
-  //       component: resolve => require(['../../component/qrcodeList.vue'],
-  //         resolve)
-  //     }
-  //   ]
-  // },
-  {
-    path: '*',
-    redirect: '/login'
-  }
+    {
+        path: '/home', // 基础布局
+        component: resolve => require(['../../component/home.vue'], resolve),
+        children: [
+            {
+                path: '/homeContent', // 首页
+                component: resolve => require(['../../component/home_content.vue'], resolve)
+            }, {
+                path: '/homeContent/login', // 登录页
+                component: resolve => require(['../../component/login.vue'], resolve)
+            }, {
+                path: '/homeContent/WXMemberList', // 好友列表
+                component: resolve => require(['../../component/WXMemberList.vue'], resolve)
+            }
+        ]
+    }, {
+        path: '*',
+        redirect: '/homeContent'
+    }
 ]
 
 const router = new VueRouter({
-  routes // （缩写）相当于 routes: routes
+    routes // （缩写）相当于 routes: routes
+})
+
+router.beforeEach((to, from, next) => {
+    iView.LoadingBar.start()
+    next()
+})
+
+router.afterEach((to, from, next) => {
+    iView.LoadingBar.finish()
 })
 
 // 输出router
